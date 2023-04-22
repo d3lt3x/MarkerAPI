@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
+    id("xyz.jpenilla.run-paper") version "2.0.0"
 }
 
 group = "me.delta.mc.marker"
@@ -44,10 +45,17 @@ publishing {
     }
 }
 
-tasks.withType<JavaCompile>() {
-    options.encoding = "UTF-8"
+tasks {
+    withType<JavaCompile>() {
+        options.encoding = "UTF-8"
+    }
+
+    withType<Javadoc>() {
+        options.encoding = "UTF-8"
+    }
+
+    runServer {
+        minecraftVersion("1.19.4")
+    }
 }
 
-tasks.withType<Javadoc>() {
-    options.encoding = "UTF-8"
-}
