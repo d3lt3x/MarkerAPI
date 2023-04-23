@@ -1,0 +1,23 @@
+  on:
+    push:
+      branches:
+        - main
+        - develop
+  name: Default Pipeline
+  jobs:
+    build:
+      strategy:
+        matrix:
+          java-version: [ '17', '20' ]
+          os: [ 'ubuntu-latest']
+      runs-on: ${{ matrix.os }}
+      steps:
+        - name: Checkout Source Code
+          uses: actions/checkout@v2
+        - name: Setup Java ${{ matrix.java-version }}
+          uses: actions/setup-java@v1
+          with:
+            java-version: ${{ matrix.java-version }}
+            architecture: x64
+        - name: Build with gradle
+          run: ./gradlew build
