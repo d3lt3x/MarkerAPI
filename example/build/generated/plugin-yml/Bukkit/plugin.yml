@@ -1,9 +1,0 @@
-name: Marker-API
-version: 1.0-SNAPSHOT
-main: me.delta.mc.marker.MarkerExample
-description: Area Marking/Selection API
-authors:
- - d3lt3x
-website: https://github.com/d3lt3x
-prefix: MarkerAPI
-api-version: 1.19
