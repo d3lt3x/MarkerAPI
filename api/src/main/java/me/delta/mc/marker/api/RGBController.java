@@ -7,13 +7,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Display;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 public class RGBController {
 
   private final Plugin plugin;
-  private final Set<BlockDisplay> blockDisplays = new HashSet<>();
+  private final Set<Display> displays = new HashSet<>();
   private int tickInterval;
   private int colorDelta;
   private boolean stopped = false;
@@ -27,7 +28,7 @@ public class RGBController {
     else this.colorDelta = 15;
   }
 
-  public int getDeltaMultiplier() {
+  public int getColorDelta() {
     return this.colorDelta;
   }
 
@@ -63,7 +64,7 @@ public class RGBController {
                     b.getAndAdd(-this.colorDelta);
                   }
 
-                  this.blockDisplays.forEach(
+                  this.displays.forEach(
                       blockDisplay -> {
                         blockDisplay.setGlowColorOverride(Color.fromRGB(r.get(), g.get(), b.get()));
                         blockDisplay.setGlowing(true);
@@ -88,31 +89,31 @@ public class RGBController {
     this.tickInterval = tickInterval;
   }
 
-  public void addDisplays(Collection<BlockDisplay> blockDisplay) {
-    this.blockDisplays.addAll(blockDisplay);
+  public void addDisplays(Collection<Display> blockDisplay) {
+    this.displays.addAll(blockDisplay);
     if (!this.stopped) this.startRBG();
   }
 
-  public void removeDisplays(Collection<BlockDisplay> blockDisplay) {
-    this.blockDisplays.removeAll(blockDisplay);
-    if (this.blockDisplays.isEmpty()) this.stopRGB();
+  public void removeDisplays(Collection<Display> display) {
+    this.displays.removeAll(display);
+    if (this.displays.isEmpty()) this.stopRGB();
   }
 
-  public void addDisplay(BlockDisplay blockDisplay) {
-    this.blockDisplays.add(blockDisplay);
+  public void addDisplay(Display display) {
+    this.displays.add(display);
     if (!this.stopped) this.startRBG();
   }
 
-  public void removeDisplay(BlockDisplay blockDisplay) {
-    this.blockDisplays.remove(blockDisplay);
-    if (this.blockDisplays.isEmpty()) this.stopRGB();
+  public void removeDisplay(Display display) {
+    this.displays.remove(display);
+    if (this.displays.isEmpty()) this.stopRGB();
   }
 
   public boolean isStopped() {
     return stopped;
   }
 
-  public Set<BlockDisplay> getBlockDisplays() {
-    return blockDisplays;
+  public Set<Display> getDisplays() {
+    return displays;
   }
 }
