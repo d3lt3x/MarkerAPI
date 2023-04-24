@@ -134,7 +134,6 @@ public class AreaMarker {
             blockDisplay.setGlowColorOverride(this.color);
             blockDisplay.setGlowing(true);
           }
-
           blockDisplay.setBlock(this.markerBlock);
           blockDisplay.setGravity(false);
           blockDisplay.setInvulnerable(true);
