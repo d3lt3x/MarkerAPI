@@ -11,8 +11,8 @@ public class MarkerBuilder {
 
     private MarkerCache cache;
 
-    public MarkerBuilder(){
-
+    public MarkerBuilder(MarkerCache cache){
+        this.cache = cache;
     }
     public <T extends SimpleDisplay> T build(Class<T> clazz, Location location, Consumer<T> consumer){
 
