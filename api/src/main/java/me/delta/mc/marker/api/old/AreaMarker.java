@@ -1,7 +1,9 @@
-package me.delta.mc.marker.api;
+package me.delta.mc.marker.api.old;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import me.delta.mc.marker.api.controllers.RGBController;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;

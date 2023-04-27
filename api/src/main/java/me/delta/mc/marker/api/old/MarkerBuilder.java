@@ -1,5 +1,6 @@
-package me.delta.mc.marker.api;
+package me.delta.mc.marker.api.old;
 
+import me.delta.mc.marker.api.controllers.RGBController;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.World;

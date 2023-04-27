@@ -1,8 +1,8 @@
 package me.delta.mc.marker.examples;
 
-import me.delta.mc.marker.api.Area;
-import me.delta.mc.marker.api.AreaMarker;
-import me.delta.mc.marker.api.MarkerBuilder;
+import me.delta.mc.marker.api.old.Area;
+import me.delta.mc.marker.api.old.AreaMarker;
+import me.delta.mc.marker.api.old.MarkerBuilder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

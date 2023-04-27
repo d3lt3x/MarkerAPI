@@ -1,4 +1,4 @@
-package me.delta.mc.marker.api;
+package me.delta.mc.marker.api.old;
 
 public enum Area {
   BOTTOM,

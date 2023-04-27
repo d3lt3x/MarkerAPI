@@ -1,9 +1,9 @@
 package me.delta.mc.marker.examples;
 
-import me.delta.mc.marker.api.Area;
-import me.delta.mc.marker.api.AreaMarker;
-import me.delta.mc.marker.api.MarkerBuilder;
-import me.delta.mc.marker.api.RGBController;
+import me.delta.mc.marker.api.old.Area;
+import me.delta.mc.marker.api.old.AreaMarker;
+import me.delta.mc.marker.api.old.MarkerBuilder;
+import me.delta.mc.marker.api.controllers.RGBController;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;

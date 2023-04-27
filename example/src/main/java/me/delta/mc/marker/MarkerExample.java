@@ -1,6 +1,6 @@
 package me.delta.mc.marker;
 
-import me.delta.mc.marker.api.RGBController;
+import me.delta.mc.marker.api.controllers.RGBController;
 import me.delta.mc.marker.examples.AreaSelection;
 import me.delta.mc.marker.examples.GroundRGB;
 
