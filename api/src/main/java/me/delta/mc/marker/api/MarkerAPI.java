@@ -6,7 +6,7 @@ public class MarkerAPI extends JavaPlugin {
 
     @Override
     public void onEnable(){
-        System.out.println("2");
+
     }
 
     @Override

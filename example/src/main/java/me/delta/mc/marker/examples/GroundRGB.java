@@ -28,8 +28,9 @@ public class GroundRGB implements Listener {
 
         if (!event.hasChangedBlock()) return;
 
-        if (this.markers.containsKey(event.getFrom().getBlock().getLocation().subtract(0, 1, 0))) {
-            this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)).removeMarker();
+        if (this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)) != null) {
+
+            this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)).removeMarker(true);
             this.markers.remove(event.getFrom().getBlock().getLocation().subtract(0, 1, 0));
         }
 
@@ -45,10 +46,9 @@ public class GroundRGB implements Listener {
     private void spawnMarker(Block block, Player player) {
 
         SurfaceMarker marker = new SurfaceMarker(player, MarkerExample.getMainCache(), block.getWorld(), BoundingBox.of(block, block).expand(-0.001), SurfaceMarker.SURFACE_SIDE.TOP);
-        marker.setInitialGlow(false);
+        marker.setInitialGlow(false).addController(this.rgbController);
         marker.mark();
         this.markers.put(block.getLocation(), marker);
-        this.rgbController.addMarker(marker);
 
 
     }

@@ -1,6 +1,7 @@
 package me.delta.mc.marker.api.markers;
 
 
+import me.delta.mc.marker.api.controllers.Controller;
 import me.delta.mc.marker.api.holders.MarkerCache;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -14,6 +15,7 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,12 +23,12 @@ public abstract class Marker<T extends Marker<T>> {
 
     private final Set<Player> players = new HashSet<>();
     private final Set<UUID> activeMarkers = new HashSet<>();
+    private final Set<Controller> controllers = new HashSet<>();
     private Color glowColor = Color.LIME;
     private boolean globalVisibility = false;
     private BlockData markerMaterial = Material.LIME_STAINED_GLASS.createBlockData();
     private MarkerCache markerCache;
     private boolean initialGlow = true;
-    private int maxElements = 1;
     private World world;
     private Player owner;
 
@@ -48,11 +50,6 @@ public abstract class Marker<T extends Marker<T>> {
 
     protected BlockDisplay spawnMarker(Location location, Consumer<BlockDisplay> displayConsumer) {
 
-        if (this.activeMarkers.size() > this.maxElements)
-            this.removeMarker();
-
-        this.markerCache.addMarker(this);
-
         return location.getWorld().spawn(location, BlockDisplay.class, display -> {
 
             display.setVisibleByDefault(this.globalVisibility);
@@ -72,19 +69,22 @@ public abstract class Marker<T extends Marker<T>> {
 
             displayConsumer.accept(display);
             this.activeMarkers.add(display.getUniqueId());
+            this.markerCache.addMarker(this);
+            this.controllers.forEach(controller -> controller.addMarker(this));
         });
 
     }
 
     public abstract void mark();
 
-    public T removeMarker() {
+    public void removeMarker(boolean cache) {
+        this.controllers.forEach(controller -> controller.removeMarker(this));
         this.activeMarkers.forEach(uuid -> {
-            Bukkit.getEntity(uuid).remove();
+            Objects.requireNonNull(Bukkit.getEntity(uuid)).remove();
         });
         this.activeMarkers.clear();
-        this.markerCache.removeMarker(this);
-        return (T) this;
+
+        if (cache) this.markerCache.removeMarker(this);
     }
 
     public abstract Marker<?> updateMarker();
@@ -98,12 +98,12 @@ public abstract class Marker<T extends Marker<T>> {
         return (T) this;
     }
 
-    protected int getMaxElements() {
-        return maxElements;
+    public Set<Controller> getControllers() {
+        return new HashSet<>(this.controllers);
     }
 
-    protected T setMaxElements(int maxElements) {
-        this.maxElements = maxElements;
+    public T addController(Controller controller) {
+        this.controllers.add(controller);
         return (T) this;
     }
 
@@ -160,15 +160,14 @@ public abstract class Marker<T extends Marker<T>> {
         return (T) this;
     }
 
-    public T setInitialGlow(boolean initialGlow) {
-        this.initialGlow = initialGlow;
-        return (T) this;
-    }
-
     public boolean isInitialGlow() {
         return initialGlow;
     }
 
+    public T setInitialGlow(boolean initialGlow) {
+        this.initialGlow = initialGlow;
+        return (T) this;
+    }
 
 
 }

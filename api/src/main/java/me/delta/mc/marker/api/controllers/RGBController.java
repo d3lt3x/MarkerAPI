@@ -53,6 +53,8 @@ public class RGBController extends Controller {
 
             super.getMarkers().forEach(marker -> marker.getActiveMarkers().forEach(uuid -> {
                 Display display = (Display) Bukkit.getEntity(uuid);
+                if (display == null)
+                    return;
                 display.setGlowColorOverride(Color.fromRGB(r.get(), g.get(), b.get()));
                 display.setGlowing(true);
             }));

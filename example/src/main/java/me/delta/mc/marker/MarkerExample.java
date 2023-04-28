@@ -17,12 +17,13 @@ public class MarkerExample extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
+
     }
 
     @Override
     public void onEnable() {
-        System.out.println("1");
+
         MAIN_CACHE = new MarkerCache(this);
         Bukkit.getPluginManager().registerEvents(new AreaSelection(), this);
         Bukkit.getPluginManager().registerEvents(new GroundRGB(new RGBController(this, 1, 15)), this);

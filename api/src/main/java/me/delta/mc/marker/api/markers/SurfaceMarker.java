@@ -18,13 +18,11 @@ public class SurfaceMarker extends Marker<SurfaceMarker> {
         super(owner, cache, world);
         this.area = area;
         this.surfaceSides = surfaceSides;
-        super.setMaxElements(this.surfaceSides.length);
     }
 
     @Override
     public void mark() {
 
-        System.out.println("marked");
         Location loc1 = new BlockVector(this.area.getMin()).toLocation(super.getWorld());
         Location loc2 = new BlockVector(this.area.getMax()).toLocation(super.getWorld());
 
@@ -42,7 +40,7 @@ public class SurfaceMarker extends Marker<SurfaceMarker> {
 
     @Override
     public SurfaceMarker updateMarker() {
-        super.removeMarker();
+        super.removeMarker(true);
         this.mark();
         return this;
     }
@@ -53,7 +51,6 @@ public class SurfaceMarker extends Marker<SurfaceMarker> {
 
     public SurfaceMarker setSurfaceSides(SURFACE_SIDE... surfaceSides) {
         this.surfaceSides = surfaceSides;
-        super.setMaxElements(surfaceSides.length);
         return this;
     }
 

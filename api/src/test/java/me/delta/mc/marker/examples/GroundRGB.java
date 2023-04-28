@@ -29,7 +29,7 @@ public class GroundRGB implements Listener {
         if (!event.hasChangedBlock()) return;
 
         if (this.markers.containsKey(event.getFrom().getBlock().getLocation().subtract(0, 1, 0))) {
-            this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)).removeMarker();
+            this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)).removeMarker(true);
             this.markers.remove(event.getFrom().getBlock().getLocation().subtract(0, 1, 0));
         }
 

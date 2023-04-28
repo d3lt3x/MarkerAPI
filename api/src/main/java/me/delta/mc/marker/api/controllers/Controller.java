@@ -26,11 +26,11 @@ public abstract class Controller {
 
     protected abstract BukkitTask run();
 
-    public void stopTask() {
+    public void stopTask(boolean persistent) {
         if (task == null) return;
         this.task.cancel();
         this.task = null;
-        this.stopped = true;
+        this.stopped = persistent;
     }
 
     public void addMarker(Marker<?> marker) {
@@ -40,7 +40,7 @@ public abstract class Controller {
 
     public void removeMarker(Marker<?> marker) {
         this.markers.remove(marker);
-        if (this.markers.isEmpty()) this.stopTask();
+        if (this.markers.isEmpty()) this.stopTask(false);
     }
 
     public boolean isStopped() {

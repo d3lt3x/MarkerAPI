@@ -16,6 +16,7 @@ import java.util.Map;
 public class AreaSelection implements Listener {
 
     private final Map<Player, Block> blockCache = new HashMap<>();
+    private final Map<Player, SurfaceMarker> currentSelections = new HashMap<>();
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -32,9 +33,18 @@ public class AreaSelection implements Listener {
             return;
         }
 
+        SurfaceMarker surfaceMarker;
 
-        SurfaceMarker surfaceMarker = new SurfaceMarker(player, MarkerExample.getMainCache(), event.getBlock().getWorld(), BoundingBox.of(this.blockCache.get(event.getPlayer()), event.getBlock()));
-        surfaceMarker.setSurfaceSides(SurfaceMarker.SURFACE_SIDE.BOTTOM, SurfaceMarker.SURFACE_SIDE.NEG_Z, SurfaceMarker.SURFACE_SIDE.NEG_X, SurfaceMarker.SURFACE_SIDE.POS_X, SurfaceMarker.SURFACE_SIDE.POS_Z, SurfaceMarker.SURFACE_SIDE.TOP);
+        if (this.currentSelections.containsKey(player)) {
+            surfaceMarker = this.currentSelections.get(player);
+            surfaceMarker.removeMarker(true);
+            surfaceMarker.setArea(BoundingBox.of(this.blockCache.get(event.getPlayer()), event.getBlock()));
+        } else {
+            surfaceMarker = new SurfaceMarker(player, MarkerExample.getMainCache(), event.getBlock().getWorld(), BoundingBox.of(this.blockCache.get(event.getPlayer()), event.getBlock()));
+            surfaceMarker.setSurfaceSides(SurfaceMarker.SURFACE_SIDE.BOTTOM, SurfaceMarker.SURFACE_SIDE.NEG_Z, SurfaceMarker.SURFACE_SIDE.NEG_X, SurfaceMarker.SURFACE_SIDE.POS_X, SurfaceMarker.SURFACE_SIDE.POS_Z, SurfaceMarker.SURFACE_SIDE.TOP);
+            this.currentSelections.put(player, surfaceMarker);
+        }
+
         surfaceMarker.setArea(surfaceMarker.getArea().expand(-0.001)).mark();
 
         player.sendMessage("area selected");
