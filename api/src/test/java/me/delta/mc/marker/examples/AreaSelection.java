@@ -1,8 +1,7 @@
 package me.delta.mc.marker.examples;
 
-import me.delta.mc.marker.api.old.Area;
-import me.delta.mc.marker.api.old.AreaMarker;
-import me.delta.mc.marker.api.old.MarkerBuilder;
+import me.delta.mc.marker.MarkerExample;
+import me.delta.mc.marker.api.markers.SurfaceMarker;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,8 +16,6 @@ import java.util.Map;
 public class AreaSelection implements Listener {
 
     private final Map<Player, Block> blockCache = new HashMap<>();
-    private final Map<Player, AreaMarker> markers = new HashMap<>();
-
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -37,26 +34,13 @@ public class AreaSelection implements Listener {
         }
 
 
-        AreaMarker marker;
-
-        if (!this.markers.containsKey(player)) {
-            marker = this.buildMarker(this.blockCache.get(player), event.getBlock());
-            marker.expandMarker(-0.001).markArea(Area.FULL);
-            this.markers.put(player, marker);
-            player.sendMessage("area selected");
-            this.blockCache.remove(player);
-            return;
-        }
-
-        marker = this.markers.get(player);
-        marker.setBox(BoundingBox.of(this.blockCache.get(player), event.getBlock())).expandMarker(-0.001).markArea(Area.FULL);
+        SurfaceMarker surfaceMarker = new SurfaceMarker(player, MarkerExample.getMainCache(), event.getBlock().getWorld(), BoundingBox.of(this.blockCache.get(event.getPlayer()), event.getBlock()));
+        surfaceMarker.setSurfaceSides(SurfaceMarker.SURFACE_SIDE.BOTTOM, SurfaceMarker.SURFACE_SIDE.NEG_Z, SurfaceMarker.SURFACE_SIDE.NEG_X, SurfaceMarker.SURFACE_SIDE.POS_X, SurfaceMarker.SURFACE_SIDE.POS_Z, SurfaceMarker.SURFACE_SIDE.TOP);
+        surfaceMarker.setArea(surfaceMarker.getArea().expand(-0.001)).mark();
         player.sendMessage("area selected");
+
         this.blockCache.remove(player);
 
-    }
-
-    private AreaMarker buildMarker(Block corner1, Block corner2) {
-        return new MarkerBuilder(corner1, corner2).build();
     }
 
 }

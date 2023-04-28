@@ -1,22 +1,23 @@
 package me.delta.mc.marker.examples;
 
-import me.delta.mc.marker.api.old.Area;
-import me.delta.mc.marker.api.old.AreaMarker;
-import me.delta.mc.marker.api.old.MarkerBuilder;
+import me.delta.mc.marker.MarkerExample;
 import me.delta.mc.marker.api.controllers.RGBController;
+import me.delta.mc.marker.api.markers.SurfaceMarker;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.BoundingBox;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GroundRGB implements Listener {
 
-    private final Map<Location, AreaMarker> markers = new HashMap<>();
-    private final RGBController rgbController;
+    private final Map<Location, SurfaceMarker> markers = new HashMap<>();
+    private RGBController rgbController;
 
     public GroundRGB(RGBController rgbController) {
         this.rgbController = rgbController;
@@ -28,7 +29,7 @@ public class GroundRGB implements Listener {
         if (!event.hasChangedBlock()) return;
 
         if (this.markers.containsKey(event.getFrom().getBlock().getLocation().subtract(0, 1, 0))) {
-            this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)).unMark();
+            this.markers.get(event.getFrom().getBlock().getLocation().subtract(0, 1, 0)).removeMarker();
             this.markers.remove(event.getFrom().getBlock().getLocation().subtract(0, 1, 0));
         }
 
@@ -38,14 +39,17 @@ public class GroundRGB implements Listener {
 
         if (this.markers.containsKey(block.getLocation())) return;
 
-        this.spawnMarker(block);
+        this.spawnMarker(block, event.getPlayer());
     }
 
-    private void spawnMarker(Block block) {
+    private void spawnMarker(Block block, Player player) {
 
-        AreaMarker marker = new MarkerBuilder(block, block).setRgbController(this.rgbController).build();
+        SurfaceMarker marker = new SurfaceMarker(player, MarkerExample.getMainCache(), block.getWorld(), BoundingBox.of(block, block).expand(-0.001), SurfaceMarker.SURFACE_SIDE.TOP);
+        marker.setInitialGlow(false);
+        marker.mark();
         this.markers.put(block.getLocation(), marker);
-        marker.expandMarker(-0.001).markArea(Area.TOP);
+        this.rgbController.addMarker(marker);
+
 
     }
 }

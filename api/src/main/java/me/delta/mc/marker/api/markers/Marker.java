@@ -1,17 +1,17 @@
 package me.delta.mc.marker.api.markers;
 
 
-import me.delta.mc.marker.api.controllers.Controller;
 import me.delta.mc.marker.api.holders.MarkerCache;
-import me.delta.mc.marker.api.holders.MarkingPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Consumer;
+import org.bukkit.util.Transformation;
+import org.jetbrains.annotations.Nullable;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,18 +19,22 @@ import java.util.UUID;
 
 public abstract class Marker<T extends Marker<T>> {
 
-    private final Set<MarkingPlayer> players = new HashSet<>();
+    private final Set<Player> players = new HashSet<>();
     private final Set<UUID> activeMarkers = new HashSet<>();
     private Color glowColor = Color.LIME;
     private boolean globalVisibility = false;
     private BlockData markerMaterial = Material.LIME_STAINED_GLASS.createBlockData();
     private MarkerCache markerCache;
     private boolean initialGlow = true;
+    private int maxElements = 1;
+    private World world;
+    private Player owner;
 
-    private Set<Controller> controllers = new HashSet<>();
-
-    public Marker(MarkerCache cache) {
+    public Marker(@Nullable Player owner, MarkerCache cache, World world) {
         this.markerCache = cache;
+        this.world = world;
+        this.owner = owner;
+        this.players.add(owner);
     }
 
     public Color getGlowColor() {
@@ -42,12 +46,22 @@ public abstract class Marker<T extends Marker<T>> {
         return (T) this;
     }
 
-    public T createMarker(Location location) {
-        location.getWorld().spawn(location, BlockDisplay.class, display -> {
+    protected BlockDisplay spawnMarker(Location location, Consumer<BlockDisplay> displayConsumer) {
+
+        if (this.activeMarkers.size() > this.maxElements)
+            this.removeMarker();
+
+        this.markerCache.addMarker(this);
+
+        return location.getWorld().spawn(location, BlockDisplay.class, display -> {
+
+            display.setVisibleByDefault(this.globalVisibility);
+            if (!this.globalVisibility) {
+                this.players.forEach(player -> player.showEntity(this.markerCache.getPlugin(), display));
+            }
 
             display.setGlowColorOverride(this.glowColor);
             display.setGlowing(this.initialGlow);
-
             display.setBlock(this.markerMaterial);
             display.setGravity(false);
             display.setInvulnerable(true);
@@ -56,31 +70,24 @@ public abstract class Marker<T extends Marker<T>> {
             display.setShadowStrength(0);
             display.setShadowRadius(0);
 
-            this.createMarker(display);
-
+            displayConsumer.accept(display);
             this.activeMarkers.add(display.getUniqueId());
         });
-        return (T) this;
+
     }
 
-    public abstract T createMarker(BlockDisplay display);
+    public abstract void mark();
 
     public T removeMarker() {
         this.activeMarkers.forEach(uuid -> {
             Bukkit.getEntity(uuid).remove();
         });
         this.activeMarkers.clear();
+        this.markerCache.removeMarker(this);
         return (T) this;
     }
 
-    public T updateMarker() {
-        final Set<UUID> cache = new HashSet<>(this.activeMarkers);
-        this.removeMarker();
-        cache.forEach(uuid -> {
-            this.createMarker(Bukkit.getEntity(uuid).getLocation());
-        });
-        return (T) this;
-    }
+    public abstract Marker<?> updateMarker();
 
     public boolean isGlobalVisibility() {
         return this.globalVisibility;
@@ -91,11 +98,42 @@ public abstract class Marker<T extends Marker<T>> {
         return (T) this;
     }
 
-    public Set<MarkingPlayer> getPlayers() {
+    protected int getMaxElements() {
+        return maxElements;
+    }
+
+    protected T setMaxElements(int maxElements) {
+        this.maxElements = maxElements;
+        return (T) this;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public T setWorld(World world) {
+        this.world = world;
+        return (T) this;
+    }
+
+    public Player getOwner() {
+        return owner;
+    }
+
+    public T setOwner(Player owner) {
+        this.owner = owner;
+        return (T) this;
+    }
+
+    protected Transformation scale(Vector3f vector3f) {
+        return new Transformation(new Vector3f(), new AxisAngle4f(), vector3f, new AxisAngle4f());
+    }
+
+    public Set<Player> getPlayers() {
         return this.players;
     }
 
-    public T addPlayer(MarkingPlayer player) {
+    public T addPlayer(Player player) {
         this.players.add(player);
         return (T) this;
     }

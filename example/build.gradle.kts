@@ -16,7 +16,7 @@ dependencies {
 
 tasks {
 	bukkit {
-		name = "Marker-API"
+		name = "Marker-Example"
 
 		version = project.version.toString()
 
@@ -24,12 +24,14 @@ tasks {
 
 		apiVersion = "1.19"
 
-		prefix = "MarkerAPI"
+		prefix = "Marker-Example"
 
 		authors = listOf("d3lt3x")
 
 		description = "Area Marking/Selection API"
 
-		website =  "https://github.com/d3lt3x"
+		website = "https://github.com/d3lt3x"
+
+		depend = listOf("MarkerAPI")
 	}
 }

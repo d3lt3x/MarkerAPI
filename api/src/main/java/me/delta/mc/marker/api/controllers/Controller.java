@@ -51,7 +51,7 @@ public abstract class Controller {
         return new HashSet<>(this.markers);
     }
 
-    protected Plugin getPlugin(){
+    protected Plugin getPlugin() {
         return this.plugin;
     }
 }

@@ -1,6 +1,6 @@
 name: MarkerAPI
 version: '${project.version}'
-main: me.delta.mc.marker.MarkerAPI
+main: me.delta.mc.marker.api.MarkerAPI
 api-version: 1.19
 prefix: MarkerAPI
 authors: [ d3lt3x ]
