@@ -87,7 +87,7 @@ public abstract class Marker<T extends Marker<T>> {
         if (cache) this.markerCache.removeMarker(this);
     }
 
-    public abstract Marker<?> updateMarker();
+    public abstract T updateMarker();
 
     public boolean isGlobalVisibility() {
         return this.globalVisibility;

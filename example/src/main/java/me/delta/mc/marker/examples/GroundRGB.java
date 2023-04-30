@@ -48,6 +48,8 @@ public class GroundRGB implements Listener {
         SurfaceMarker marker = new SurfaceMarker(player, MarkerExample.getMainCache(), block.getWorld(), BoundingBox.of(block, block).expand(-0.001), SurfaceMarker.SURFACE_SIDE.TOP);
         marker.setInitialGlow(false).addController(this.rgbController);
         marker.mark();
+
+
         this.markers.put(block.getLocation(), marker);
 
 

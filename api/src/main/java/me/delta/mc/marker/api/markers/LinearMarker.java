@@ -18,7 +18,9 @@ public class LinearMarker extends Marker<LinearMarker> {
     }
 
     @Override
-    public Marker<LinearMarker> updateMarker() {
-        return this;
+    public LinearMarker updateMarker() {
+        return null;
     }
+
+
 }

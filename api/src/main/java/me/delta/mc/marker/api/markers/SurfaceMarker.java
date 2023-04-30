@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class SurfaceMarker extends Marker<SurfaceMarker> {
-
     private BoundingBox area;
     private SURFACE_SIDE[] surfaceSides;
 
@@ -44,6 +43,7 @@ public class SurfaceMarker extends Marker<SurfaceMarker> {
         this.mark();
         return this;
     }
+
 
     public SURFACE_SIDE[] getSurfaceSides() {
         return this.surfaceSides.clone();
