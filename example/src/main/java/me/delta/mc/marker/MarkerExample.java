@@ -25,8 +25,9 @@ public class MarkerExample extends JavaPlugin {
     public void onEnable() {
 
         MAIN_CACHE = new MarkerCache(this);
-        Bukkit.getPluginManager().registerEvents(new AreaSelection(this), this);
-        Bukkit.getPluginManager().registerEvents(new GroundRGB(new RGBController(this, 1, 15)), this);
+        RGBController controller = new RGBController(this, 1, 17);
+        Bukkit.getPluginManager().registerEvents(new AreaSelection(controller), this);
+        Bukkit.getPluginManager().registerEvents(new GroundRGB(controller), this);
 
     }
 }

@@ -107,6 +107,12 @@ public abstract class Marker<T extends Marker<T>> {
         return (T) this;
     }
 
+    public T removeController(Controller controller) {
+        controller.removeMarker(this);
+        this.controllers.remove(controller);
+        return (T) this;
+    }
+
     public World getWorld() {
         return world;
     }
@@ -137,6 +143,7 @@ public abstract class Marker<T extends Marker<T>> {
         this.players.add(player);
         return (T) this;
     }
+
 
     public BlockData getMarkerMaterial() {
         return this.markerMaterial;
