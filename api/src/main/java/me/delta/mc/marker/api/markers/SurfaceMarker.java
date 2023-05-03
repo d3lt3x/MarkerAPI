@@ -37,12 +37,6 @@ public class SurfaceMarker extends Marker<SurfaceMarker> {
         }
     }
 
-    @Override
-    public SurfaceMarker updateMarker() {
-        super.removeMarker(true);
-        this.mark();
-        return this;
-    }
 
 
     public SURFACE_SIDE[] getSurfaceSides() {

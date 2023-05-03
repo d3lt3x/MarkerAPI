@@ -3,6 +3,7 @@ package me.delta.mc.marker.examples;
 import me.delta.mc.marker.MarkerExample;
 import me.delta.mc.marker.api.controllers.RGBController;
 import me.delta.mc.marker.api.markers.CubicMarker;
+import me.delta.mc.marker.api.markers.LinearMarker;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -112,10 +113,23 @@ public class AreaSelection implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
 
+        Player player = event.getPlayer();
+
+        if (player.getInventory().getItemInMainHand().getType().equals(Material.APPLE)) {
+            Location location = event.getClickedBlock().getBoundingBox().getCenter().toLocation(player.getWorld());
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location, location.clone().add(0, 0, 1)).mark();
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location, location.clone().add(1, 0, 0)).mark();
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(1, 0, 0), location.clone().add(1, 0, 1)).mark();
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(0, 0, 1), location.clone().add(1, 0, 1)).mark();
+
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location, location.clone().add(0.5, 1, 0.5)).mark();
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(1, 0, 0), location.clone().add(0.5, 1, 0.5)).mark();
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(0, 0, 1), location.clone().add(0.5, 1, 0.5)).mark();
+            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(1, 0, 1), location.clone().add(0.5, 1, 0.5)).mark();
+            return;
+        }
 
         if (!event.getAction().isLeftClick()) return;
-
-        Player player = event.getPlayer();
 
         RayTraceResult result = player.rayTraceBlocks(200);
         if (result == null) return;
