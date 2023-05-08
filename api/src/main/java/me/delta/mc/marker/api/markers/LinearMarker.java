@@ -1,7 +1,7 @@
 package me.delta.mc.marker.api.markers;
 
 import me.delta.mc.marker.api.holders.MarkerCache;
-import org.bukkit.Location;
+import me.delta.mc.marker.api.util.Line;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Transformation;
@@ -12,52 +12,45 @@ import org.joml.Vector3f;
 
 public class LinearMarker extends Marker<LinearMarker> {
 
-    private Location loc1;
-    private Location loc2;
+    private Line[] lines;
 
     private float width = 0.02F;
 
-    public LinearMarker(@Nullable Player owner, MarkerCache cache, World world, Location loc1, Location loc2) {
+    public LinearMarker(@Nullable Player owner, MarkerCache cache, World world, Line... lines) {
         super(owner, cache, world);
-        this.loc1 = loc1;
-        this.loc2 = loc2;
+        this.lines = lines;
     }
 
     @Override
     public void mark() {
 
-        Vector vector = this.loc2.toVector().clone().subtract(this.loc1.toVector());
-        Vector xAxis = new Vector(1, 0, 0);
-        Vector rotationAxis = vector.clone().crossProduct(xAxis).normalize();
-        float angle = -vector.angle(xAxis);
+        for (Line line : this.lines) {
 
-        if (vector.angle(xAxis) == 0)
-            rotationAxis = new Vector(0, 0, 0);
+            Vector vector = line.asVector();
+            Vector xAxis = new Vector(1, 0, 0);
+            Vector rotationAxis = vector.clone().crossProduct(xAxis).normalize();
+            float angle = -vector.angle(xAxis);
 
-        Transformation transformation = new Transformation(new Vector3f(), new AxisAngle4f(angle, (float) rotationAxis.getX(), (float) rotationAxis.getY(), (float) rotationAxis.getZ()), new Vector3f((float) vector.length(), this.width, this.width), new AxisAngle4f());
+            if (vector.angle(xAxis) == 0)
+                rotationAxis = new Vector(0, 0, 0);
 
-        super.spawnMarker(this.loc1, blockDisplay -> {
-            blockDisplay.setTransformation(transformation);
+            Transformation transformation = new Transformation(new Vector3f(), new AxisAngle4f(angle, (float) rotationAxis.getX(), (float) rotationAxis.getY(), (float) rotationAxis.getZ()), new Vector3f((float) vector.length(), this.width, this.width), new AxisAngle4f());
 
-        });
+            super.spawnMarker(line.base().toLocation(super.getWorld()), blockDisplay -> {
+                blockDisplay.setTransformation(transformation);
+
+            });
+
+        }
 
     }
 
-    public Location getLoc1() {
-        return loc1;
+    public Line[] getLines() {
+        return this.lines;
     }
 
-    public LinearMarker setLoc1(Location loc1) {
-        this.loc1 = loc1;
-        return this;
-    }
-
-    public Location getLoc2() {
-        return loc2;
-    }
-
-    public LinearMarker setLoc2(Location loc2) {
-        this.loc2 = loc2;
+    public LinearMarker setLines(Line... lines) {
+        this.lines = lines;
         return this;
     }
 

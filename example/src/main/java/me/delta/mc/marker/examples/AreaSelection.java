@@ -1,9 +1,12 @@
 package me.delta.mc.marker.examples;
 
 import me.delta.mc.marker.MarkerExample;
+import me.delta.mc.marker.api.controllers.FloatingController;
 import me.delta.mc.marker.api.controllers.RGBController;
 import me.delta.mc.marker.api.markers.CubicMarker;
+import me.delta.mc.marker.api.markers.GridMarker;
 import me.delta.mc.marker.api.markers.LinearMarker;
+import me.delta.mc.marker.api.util.Line;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,7 +25,7 @@ public class AreaSelection implements Listener {
 
     private final Map<Player, CubicMarker> blockCache = new HashMap<>();
     private final Map<Player, CubicMarker> currentSelections = new HashMap<>();
-    private final Map<Player, CubicMarker> currentPreview = new HashMap<>();
+    private final Map<Player, GridMarker> currentPreview = new HashMap<>();
 
     private final Map<Player, CubicMarker> currentPos = new HashMap<>();
 
@@ -57,11 +60,11 @@ public class AreaSelection implements Listener {
 
             Location destination = hitBlock.getLocation().add(0, 1, 0);
 
-            CubicMarker preview;
+            GridMarker preview;
 
             if (!this.currentPreview.containsKey(player)) {
 
-                preview = new CubicMarker(player, MarkerExample.getMainCache(), destination.getWorld(), BoundingBox.of(destination.toVector(), destination.toVector().add(marker.getArea().getMax().subtract(marker.getArea().getMin()))));
+                preview = new GridMarker(player, MarkerExample.getMainCache(), destination.getWorld(), BoundingBox.of(destination.toVector(), destination.toVector().add(marker.getArea().getMax().subtract(marker.getArea().getMin()))));
                 preview.addController(this.controller);
                 this.currentPreview.put(player, preview);
 
@@ -116,16 +119,23 @@ public class AreaSelection implements Listener {
         Player player = event.getPlayer();
 
         if (player.getInventory().getItemInMainHand().getType().equals(Material.APPLE)) {
-            Location location = event.getClickedBlock().getBoundingBox().getCenter().toLocation(player.getWorld());
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location, location.clone().add(0, 0, 1)).mark();
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location, location.clone().add(1, 0, 0)).mark();
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(1, 0, 0), location.clone().add(1, 0, 1)).mark();
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(0, 0, 1), location.clone().add(1, 0, 1)).mark();
-
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location, location.clone().add(0.5, 1, 0.5)).mark();
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(1, 0, 0), location.clone().add(0.5, 1, 0.5)).mark();
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(0, 0, 1), location.clone().add(0.5, 1, 0.5)).mark();
-            new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld(), location.clone().add(1, 0, 1), location.clone().add(0.5, 1, 0.5)).mark();
+            if (event.getClickedBlock() == null)
+                return;
+            Location location = event.getClickedBlock().getLocation().add(0, 1, 0);
+            LinearMarker marker = new LinearMarker(player, MarkerExample.getMainCache(), player.getWorld());
+            marker.addController(new FloatingController(MarkerExample.getInstance(), 0, 0.04F));
+            marker.addController(this.controller);
+            marker.setWidth(0.01F);
+            marker.setLines(
+                    new Line(location.clone().add(0, 0, 1), location),
+                    new Line(location.clone().add(1, 0, 0), location),
+                    new Line(location.clone().add(1, 0, 0), location.clone().add(1, 0, 1)),
+                    new Line(location.clone().add(1, 0, 1), location.clone().add(0, 0, 1)),
+                    new Line(location.clone().add(0.5, 1, 0.5), location),
+                    new Line(location.clone().add(0.5, 1, 0.5), location.clone().add(1, 0, 0)),
+                    new Line(location.clone().add(0, 0, 1), location.clone().add(0.5, 1, 0.5)),
+                    new Line(location.clone().add(0.5, 1, 0.5), location.clone().add(1, 0, 1))
+            ).mark();
             return;
         }
 
@@ -143,6 +153,7 @@ public class AreaSelection implements Listener {
             marker.getSelection().pasteSelection(hitBlock.getLocation().add(0, 1, 0));
             marker.removeMarker(true);
             this.currentSelections.remove(player);
+            player.sendMessage("pasted");
         }
 
 
@@ -170,8 +181,10 @@ public class AreaSelection implements Listener {
             this.currentSelections.put(player, cubicMarker);
         }
 
-        cubicMarker.setArea(cubicMarker.getArea().expand(-0.001)).mark();
+        cubicMarker.mark();
         player.sendMessage("area selected");
+        this.currentPos.get(player).removeMarker(true);
+        this.currentPos.remove(player);
         this.blockCache.get(player).removeMarker(true);
         this.blockCache.remove(player);
 

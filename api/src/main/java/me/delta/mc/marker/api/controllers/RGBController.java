@@ -2,7 +2,6 @@ package me.delta.mc.marker.api.controllers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.entity.Display;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -51,13 +50,12 @@ public class RGBController extends Controller {
                 b.getAndAdd(-this.colorDelta);
             }
 
-            super.getMarkers().forEach(marker -> marker.getActiveMarkers().forEach(uuid -> {
-                Display display = (Display) Bukkit.getEntity(uuid);
-                if (display == null)
-                    return;
-                display.setGlowColorOverride(Color.fromRGB(r.get(), g.get(), b.get()));
-                display.setGlowing(true);
-            }));
+            super.getMarkers().forEach(marker -> {
+                marker.editMarker(displays -> {
+                    displays.setGlowColorOverride(Color.fromRGB(r.get(), g.get(), b.get()));
+                    displays.setGlowing(true);
+                });
+            });
         }, 0, this.tickInterval);
     }
 

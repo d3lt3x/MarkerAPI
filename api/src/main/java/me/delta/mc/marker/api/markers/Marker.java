@@ -75,6 +75,15 @@ public abstract class Marker<T extends Marker<T>> {
 
     }
 
+    public void editMarker(Consumer<BlockDisplay> displays) {
+        this.getActiveMarkers().forEach(uuid -> {
+            BlockDisplay display = (BlockDisplay) Bukkit.getEntity(uuid);
+            if (display == null)
+                return;
+            displays.accept(display);
+        });
+    }
+
     public abstract void mark();
 
     public void removeMarker(boolean cache) {
@@ -93,7 +102,6 @@ public abstract class Marker<T extends Marker<T>> {
         return (T) this;
     }
 
-    ;
 
     public boolean isGlobalVisibility() {
         return this.globalVisibility;
@@ -139,6 +147,14 @@ public abstract class Marker<T extends Marker<T>> {
 
     protected Transformation scale(Vector3f vector3f) {
         return new Transformation(new Vector3f(), new AxisAngle4f(), vector3f, new AxisAngle4f());
+    }
+
+    public T translateMarker(Vector3f translation) {
+        this.editMarker(display -> {
+            Transformation currentTransformation = display.getTransformation();
+            display.setTransformation(new Transformation(currentTransformation.getTranslation().add(translation), currentTransformation.getRightRotation(), currentTransformation.getScale(), currentTransformation.getRightRotation()));
+        });
+        return (T) this;
     }
 
     public Set<Player> getPlayers() {
