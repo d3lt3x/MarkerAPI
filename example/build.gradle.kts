@@ -1,8 +1,8 @@
 plugins {
 	`java-library`
 	id("com.github.johnrengelman.shadow") version "8.1.1"
-	id("xyz.jpenilla.run-paper") version "2.0.0"
 	id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+	id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "me.delta.mc.marker"
@@ -33,5 +33,9 @@ tasks {
 		website = "https://github.com/d3lt3x"
 
 		depend = listOf("MarkerAPI")
+	}
+
+	runServer {
+		minecraftVersion("1.19.4")
 	}
 }
